@@ -6,6 +6,7 @@
 3. Create the table required for xhprof_runs.php, there should be sample instructions inside that document alongside
 the constructor.
 4. Edit xhprof_lib/config.php with your database credentials, control IPs, and other fun stuff
+4a.Create db table defined below
 5. Load up index.php, ensure happiness
 6. Edit the virtual host configuration for the site you'd like to profile to 
 php_admin_value auto_prepend_file="<path>/external/header.php"
@@ -14,3 +15,29 @@ php_admin_value auto_append_file="<path>/external/footer.php"
 8. Hitting a file with ?_profile=1 should profile the page and give you a link at the bottom
 
 There's a decent blog post on setting this up, as well as tips on how to use it at: http://phpadvent.org/2010/profiling-with-xhgui-by-paul-reinheimer
+
+CREATE TABLE `details` (
+  `id` char(17) NOT NULL,
+  `url` varchar(255) default NULL,
+  `c_url` varchar(255) default NULL,
+  `timestamp` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  `server name` varchar(64) default NULL,
+  `perfdata` MEDIUMBLOB,
+  `type` tinyint(4) default NULL,
+  `cookie` BLOB,
+  `post` BLOB,
+  `get` BLOB,
+  `pmu` int(11) default NULL,
+  `wt` int(11) default NULL,
+  `cpu` int(11) default NULL,
+  `server_id` char(3) NOT NULL default 't11',
+  `aggregateCalls_include` varchar(255) DEFAULT NULL,
+  PRIMARY KEY  (`id`),
+  KEY `url` (`url`),
+  KEY `c_url` (`c_url`),
+  KEY `cpu` (`cpu`),
+  KEY `wt` (`wt`),
+  KEY `pmu` (`pmu`),
+  KEY `timestamp` (`timestamp`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
