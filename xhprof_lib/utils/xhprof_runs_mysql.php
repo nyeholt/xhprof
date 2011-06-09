@@ -239,7 +239,10 @@ CREATE TABLE `details` (
   
   public static function getNextAssoc($resultSet)
   {
-    return mysql_fetch_assoc($resultSet);
+	if ($resultSet) {
+	    return mysql_fetch_assoc($resultSet);
+	}
+	return array();
   }
   
   /**
