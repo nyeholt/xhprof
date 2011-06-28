@@ -34,10 +34,10 @@ if($allowedControl && isset($_GET['_profile']))
 {
     //Give them a cookie to hold status, and redirect back to the same page
     setcookie('_profile', $_GET['_profile']);
-    if (isset($_GET['key'])) {
+    if (isset($_GET['_key'])) {
 	setcookie('_key', $_GET['_key']);
     }
-    $newURI = str_replace(array('_profile=1','_profile=0', '_key='.$keyVal), '', $_SERVER['REQUEST_URI']);
+    $newURI = str_replace(array('_profile=1','_profile=0', '_key='.$keyVal, '?&'), '', $_SERVER['REQUEST_URI']);
 	header("Location: $newURI");
     exit;
 } else if (isset($_GET['_profile'])) {
@@ -51,6 +51,7 @@ if ($allowedControl && (isset($_COOKIE['_profile']) && $_COOKIE['_profile']))
     $_xhprof['display'] = true;
     $_xhprof['doprofile'] = true;
     $_xhprof['type'] = 1;
+} else {
 }
 
 //Certain URLs should never have a link displayed. Think images, xml, etc. 
