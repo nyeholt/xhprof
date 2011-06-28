@@ -24,15 +24,21 @@ class visibilitator
 	}
 }
 
+$keyVal = isset($_GET['_key']) ? $_GET['_key'] : (isset($_COOKIE['_key']) ? $_COOKIE['_key'] : '');
 //User has control, and is attempting to modify profiling parameters
-$controlKeyMatch = isset($_GET['_key']) && $_GET['_key'] == $controlKey;
+$controlKeyMatch = $keyVal == $controlKey;
 
-if((in_array($_SERVER['REMOTE_ADDR'], $controlIPs) || $controlKeyMatch) && isset($_GET['_profile']))
+$allowedControl = $controlKeyMatch || in_array($_SERVER['REMOTE_ADDR'], $controlIPs);
+
+if($allowedControl && isset($_GET['_profile']))
 {
     //Give them a cookie to hold status, and redirect back to the same page
     setcookie('_profile', $_GET['_profile']);
-    $newURI = str_replace(array('_profile=1','_profile=0'), '', $_SERVER['REQUEST_URI']);
-    header("Location: $newURI");
+    if (isset($_GET['key'])) {
+	setcookie('_key', $_GET['_key']);
+    }
+    $newURI = str_replace(array('_profile=1','_profile=0', '_key='.$keyVal), '', $_SERVER['REQUEST_URI']);
+	header("Location: $newURI");
     exit;
 } else if (isset($_GET['_profile'])) {
 	exit("Invalid profile host " . $_SERVER['REMOTE_ADDR']);
@@ -40,7 +46,7 @@ if((in_array($_SERVER['REMOTE_ADDR'], $controlIPs) || $controlKeyMatch) && isset
 
 
 // Only users from authorized IP addresses may control Profiling
-if (in_array($_SERVER['REMOTE_ADDR'], $controlIPs) && (isset($_COOKIE['_profile']) && $_COOKIE['_profile']))
+if ($allowedControl && (isset($_COOKIE['_profile']) && $_COOKIE['_profile']))
 {
     $_xhprof['display'] = true;
     $_xhprof['doprofile'] = true;
