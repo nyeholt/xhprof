@@ -1,6 +1,5 @@
 <?php
 include(dirname(__FILE__) . '/..//xhprof_lib/config.php');
-
 //I'm Magic :)
 class visibilitator
 {
@@ -26,13 +25,17 @@ class visibilitator
 }
 
 //User has control, and is attempting to modify profiling parameters
-if(in_array($_SERVER['REMOTE_ADDR'], $controlIPs) && isset($_GET['_profile']))
+$controlKeyMatch = isset($_GET['_key']) && $_GET['_key'] == $controlKey;
+
+if((in_array($_SERVER['REMOTE_ADDR'], $controlIPs) || $controlKeyMatch) && isset($_GET['_profile']))
 {
     //Give them a cookie to hold status, and redirect back to the same page
     setcookie('_profile', $_GET['_profile']);
     $newURI = str_replace(array('_profile=1','_profile=0'), '', $_SERVER['REQUEST_URI']);
     header("Location: $newURI");
     exit;
+} else if (isset($_GET['_profile'])) {
+	exit("Invalid profile host " . $_SERVER['REMOTE_ADDR']);
 }
 
 

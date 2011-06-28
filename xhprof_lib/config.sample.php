@@ -38,6 +38,9 @@ $_xhprof['doprofile'] = false;
 $controlIPs = array();
 $controlIPs[] = "127.0.0.1";   //Localhost, you'll want to add your own ip here
 
+// if a user provides this, then we're cool to go 
+$controlKey = '53f56971eebd1b2389b9c85ce079ef44';
+
 $otherURLS = array();
 
 //Default weight - can be overidden by an Apache environment variable 'xhprof_weight' for domain-specific values
