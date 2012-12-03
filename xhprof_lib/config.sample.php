@@ -27,10 +27,14 @@ $_xhprof['dot_errfile'] = '/tmp/xh_dot.err';
 */
 
 $exceptionURLs = array();
+$exceptionURLs[] = '/Security/';
+$exceptionURLs[] = '/dev/';
+$exceptionURLs[] = '/admin/';
 
 $exceptionPostURLs = array();
 $exceptionPostURLs[] = "login";
 
+$exceptionPostURLs[] = 'Security';
 
 $_xhprof['display'] = false;
 $_xhprof['doprofile'] = false;
@@ -49,6 +53,9 @@ $weight = 100;
 if($domain_weight = getenv('xhprof_weight')) {
 	$weight = $domain_weight;
 }
+
+if (!function_exists('_urlSimilartor')) {
+	
 
   /**
   * The goal of this function is to accept the URL for a resource, and return a "simplified" version
@@ -119,3 +126,5 @@ if($domain_weight = getenv('xhprof_weight')) {
     }
     return array_merge($addIns, $calls);
   }
+}
+  
