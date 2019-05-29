@@ -3,20 +3,20 @@ $_xhprof = array();
 
 // Change these:
 $_xhprof['dbtype'] = 'mysql'; // Only relevant for PDO
-$_xhprof['dbhost'] = 'localhost';
+$_xhprof['dbhost'] = 'mysql';
 $_xhprof['dbuser'] = 'root';
 $_xhprof['dbpass'] = 'password';
 $_xhprof['dbname'] = 'xhprof';
 $_xhprof['dbadapter'] = 'Pdo';
-$_xhprof['servername'] = 'myserver';
+$_xhprof['servername'] = '1';
 $_xhprof['namespace'] = 'myapp';
-$_xhprof['url'] = 'http://url/to/xhprof/xhprof_html';
+$_xhprof['url'] = 'http://localhost/yaxgui/xhprof_html';
 /*
  * MySQL/MySQLi/PDO ONLY
  * Switch to JSON for better performance and support for larger profiler data sets.
  * WARNING: Will break with existing profile data, you will need to TRUNCATE the profile data table.
  */
-$_xhprof['serializer'] = 'php'; 
+$_xhprof['serializer'] = 'json';
 
 //Uncomment one of these, platform dependent. You may need to tune for your specific environment, but they're worth a try
 
@@ -48,9 +48,10 @@ $_xhprof['display'] = false;
 $_xhprof['doprofile'] = false;
 
 //Control IPs allow you to specify which IPs will be permitted to control when profiling is on or off within your application, and view the results via the UI.
-// $controlIPs = false; //Disables access controlls completely. 
+// $controlIPs = false; //Disables access controlls completely.
 $controlIPs = array();
 $controlIPs[] = "127.0.0.1";   // localhost, you'll want to add your own ip here
+$controlIPs[] = "172.19.0.1";	// this will depend on your docker config!!
 $controlIPs[] = "::1";         // localhost IP v6
 
 //$otherURLS = array();
@@ -59,7 +60,7 @@ $controlIPs[] = "::1";         // localhost IP v6
 //$ignoredFunctions = array('call_user_func', 'call_user_func_array', 'socket_select');
 
 //Default weight - can be overidden by an Apache environment variable 'xhprof_weight' for domain-specific values
-$weight = 100;
+$weight = 1;
 
 if($domain_weight = getenv('xhprof_weight')) {
 	$weight = $domain_weight;
@@ -76,24 +77,24 @@ unset($domain_weight);
   * worthwhile to consider them as identical. The script will store both the original URL and the
   * Simplified URL for display and comparison purposes. A good simplified URL would be:
   * http://example.org/stories.php?id=
-  * 
+  *
   * @param string $url The URL to be simplified
-  * @return string The simplified URL 
+  * @return string The simplified URL
   */
   function _urlSimilartor($url)
   {
-      //This is an example 
+      //This is an example
       $url = preg_replace("!\d{4}!", "", $url);
-      
+
       // For domain-specific configuration, you can use Apache setEnv xhprof_urlSimilartor_include [some_php_file]
       if($similartorinclude = getenv('xhprof_urlSimilartor_include')) {
       	require_once($similartorinclude);
       }
-      
+
       $url = preg_replace("![?&]_profile=\d!", "", $url);
       return $url;
   }
-  
+
   function _aggregateCalls($calls, $rules = null)
   {
     $rules = array(
@@ -105,8 +106,8 @@ unset($domain_weight);
   	if(isset($run_details['aggregateCalls_include']) && strlen($run_details['aggregateCalls_include']) > 1)
 		{
     	require_once($run_details['aggregateCalls_include']);
-		}        
-        
+		}
+
     $addIns = array();
     foreach($calls as $index => $call)
     {
